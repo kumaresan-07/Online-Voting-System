@@ -1,6 +1,6 @@
-# Online Voting System - Python/Flask Version
+# ONLINE VOTING SYSTEM
 
-A modern, secure online voting system built with Python Flask, MySQL, HTML, JavaScript, and CSS. This is a complete conversion of the PHP online voting system to Python.
+A modern, secure online voting system built with Python Flask, MySQL, HTML, JavaScript, and CSS.
 
 ## 🚀 Quick Start
 
