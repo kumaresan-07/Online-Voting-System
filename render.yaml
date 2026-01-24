@@ -3,7 +3,7 @@ services:
     name: online-voting-system
     env: python
     buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn "app:create_app()"
+    startCommand: gunicorn wsgi:app
     envVars:
       - key: DB_MODE
         value: sqlite
