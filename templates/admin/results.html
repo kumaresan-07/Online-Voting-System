@@ -1,0 +1,99 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Results - Admin{% endblock %}
+
+{% block extra_css %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="admin-page">
+    <div class="page-header">
+        <h1><i class="fas fa-chart-pie"></i> Voting Results</h1>
+        <form method="POST" action="{{ url_for('admin.reset_votes') }}" onsubmit="return confirm('Are you sure you want to reset all votes? This cannot be undone!')">
+            <button type="submit" class="btn btn-danger">
+                <i class="fas fa-redo"></i> Reset All Votes
+            </button>
+        </form>
+    </div>
+    
+    {% if results_data %}
+    <div class="results-grid">
+        {% for data in results_data %}
+        <div class="result-card admin-result">
+            <div class="result-header">
+                <h2><i class="fas fa-award"></i> {{ data.position.name }}</h2>
+                <span class="total-votes">Total: {{ data.total_votes }} votes</span>
+            </div>
+            <div class="chart-container">
+                <canvas id="chart_{{ data.position.id }}"></canvas>
+            </div>
+            <div class="candidates-list">
+                {% for candidate in data.candidates %}
+                <div class="result-candidate {% if loop.first and data.total_votes > 0 %}leading{% endif %}">
+                    <div class="candidate-info">
+                        <span class="rank">#{{ loop.index }}</span>
+                        <span class="candidate-name">{{ candidate.name }}</span>
+                        <span class="candidate-votes">{{ candidate.votes_count }} votes</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress" style="width: {{ (candidate.votes_count / data.total_votes * 100) if data.total_votes > 0 else 0 }}%"></div>
+                    </div>
+                    <span class="percentage">
+                        {{ "%.1f"|format((candidate.votes_count / data.total_votes * 100) if data.total_votes > 0 else 0) }}%
+                    </span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="no-results">
+        <i class="fas fa-chart-pie"></i>
+        <h2>No Results Available</h2>
+        <p>Add positions and candidates to see results.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const colors = [
+        '#3498db', '#e74c3c', '#2ecc71', '#f39c12', '#9b59b6',
+        '#1abc9c', '#e67e22', '#34495e', '#16a085', '#c0392b'
+    ];
+    
+    {% for data in results_data %}
+    new Chart(document.getElementById('chart_{{ data.position.id }}'), {
+        type: 'bar',
+        data: {
+            labels: [{% for c in data.candidates %}'{{ c.name }}'{% if not loop.last %}, {% endif %}{% endfor %}],
+            datasets: [{
+                label: 'Votes',
+                data: [{% for c in data.candidates %}{{ c.votes_count }}{% if not loop.last %}, {% endif %}{% endfor %}],
+                backgroundColor: colors.slice(0, {{ data.candidates|length }})
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            }
+        }
+    });
+    {% endfor %}
+</script>
+{% endblock %}

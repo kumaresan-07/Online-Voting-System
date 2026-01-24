@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}Welcome - Online Voting System{% endblock %}
+
+{% block content %}
+<div class="hero">
+    <div class="hero-content">
+        <h1><i class="fas fa-vote-yea"></i> Online Voting System</h1>
+        <p>A secure and easy way to cast your vote online</p>
+        <div class="hero-buttons">
+            <a href="{{ url_for('auth.login') }}" class="btn btn-primary">
+                <i class="fas fa-sign-in-alt"></i> Login to Vote
+            </a>
+            <a href="{{ url_for('auth.register') }}" class="btn btn-secondary">
+                <i class="fas fa-user-plus"></i> Register Now
+            </a>
+        </div>
+    </div>
+</div>
+
+<section class="features">
+    <h2>Why Choose Our Voting System?</h2>
+    <div class="feature-grid">
+        <div class="feature-card">
+            <i class="fas fa-shield-alt"></i>
+            <h3>Secure</h3>
+            <p>Your vote is encrypted and protected with industry-standard security measures.</p>
+        </div>
+        <div class="feature-card">
+            <i class="fas fa-clock"></i>
+            <h3>Fast</h3>
+            <p>Cast your vote in seconds from anywhere with an internet connection.</p>
+        </div>
+        <div class="feature-card">
+            <i class="fas fa-check-circle"></i>
+            <h3>Reliable</h3>
+            <p>Every vote is counted accurately and results are available in real-time.</p>
+        </div>
+        <div class="feature-card">
+            <i class="fas fa-mobile-alt"></i>
+            <h3>Accessible</h3>
+            <p>Works on all devices - desktop, tablet, and mobile.</p>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: online-voting-system
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn "app:create_app()"
+    envVars:
+      - key: DB_MODE
+        value: sqlite
+      - key: SECRET_KEY
+        generateValue: true
+      - key: PYTHON_VERSION
+        value: 3.11.0

@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}Register - Online Voting System{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-header">
+            <i class="fas fa-user-plus"></i>
+            <h2>Voter Registration</h2>
+        </div>
+        <form method="POST" action="{{ url_for('auth.register') }}" class="auth-form">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="first_name"><i class="fas fa-user"></i> First Name</label>
+                    <input type="text" id="first_name" name="first_name" required placeholder="First name">
+                </div>
+                <div class="form-group">
+                    <label for="last_name"><i class="fas fa-user"></i> Last Name</label>
+                    <input type="text" id="last_name" name="last_name" required placeholder="Last name">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="email"><i class="fas fa-envelope"></i> Email</label>
+                <input type="email" id="email" name="email" required placeholder="Enter your email">
+            </div>
+            <div class="form-group">
+                <label for="voter_id"><i class="fas fa-id-card"></i> Voter ID</label>
+                <input type="text" id="voter_id" name="voter_id" required placeholder="Enter your voter ID">
+            </div>
+            <div class="form-group">
+                <label for="password"><i class="fas fa-lock"></i> Password</label>
+                <input type="password" id="password" name="password" required placeholder="Create a password">
+            </div>
+            <div class="form-group">
+                <label for="confirm_password"><i class="fas fa-lock"></i> Confirm Password</label>
+                <input type="password" id="confirm_password" name="confirm_password" required placeholder="Confirm your password">
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">
+                <i class="fas fa-user-plus"></i> Register
+            </button>
+        </form>
+        <div class="auth-footer">
+            <p>Already have an account? <a href="{{ url_for('auth.login') }}">Login here</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}

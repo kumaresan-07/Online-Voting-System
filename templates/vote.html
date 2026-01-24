@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block title %}Cast Your Vote - Online Voting System{% endblock %}
+
+{% block content %}
+<div class="vote-container">
+    <div class="vote-header">
+        <h1><i class="fas fa-check-to-slot"></i> Cast Your Vote</h1>
+        <p>Welcome, {{ current_user.first_name }}! Please select one candidate for each position.</p>
+    </div>
+    
+    {% if positions %}
+    <form method="POST" action="{{ url_for('voter.submit_vote') }}" class="vote-form" id="voteForm">
+        {% for position in positions %}
+        <div class="position-card">
+            <div class="position-header">
+                <h2><i class="fas fa-award"></i> {{ position.name }}</h2>
+                {% if position.description %}
+                <p>{{ position.description }}</p>
+                {% endif %}
+            </div>
+            <div class="candidates-grid">
+                {% for candidate in position.candidates %}
+                <label class="candidate-card">
+                    <input type="radio" name="position_{{ position.id }}" value="{{ candidate.id }}" required>
+                    <div class="candidate-content">
+                        <div class="candidate-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <h3>{{ candidate.name }}</h3>
+                        <span class="check-mark"><i class="fas fa-check"></i></span>
+                    </div>
+                </label>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+        
+        <div class="vote-actions">
+            <button type="submit" class="btn btn-primary btn-lg" id="submitVote">
+                <i class="fas fa-paper-plane"></i> Submit Vote
+            </button>
+        </div>
+    </form>
+    {% else %}
+    <div class="no-positions">
+        <i class="fas fa-exclamation-circle"></i>
+        <h2>No Positions Available</h2>
+        <p>There are currently no positions to vote for. Please check back later.</p>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Confirmation Modal -->
+<div class="modal" id="confirmModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2><i class="fas fa-exclamation-triangle"></i> Confirm Your Vote</h2>
+        </div>
+        <div class="modal-body">
+            <p>Are you sure you want to submit your vote? This action cannot be undone.</p>
+        </div>
+        <div class="modal-actions">
+            <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+            <button class="btn btn-primary" onclick="confirmVote()">Confirm Vote</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const form = document.getElementById('voteForm');
+    const modal = document.getElementById('confirmModal');
+    
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            modal.classList.add('active');
+        });
+    }
+    
+    function closeModal() {
+        modal.classList.remove('active');
+    }
+    
+    function confirmVote() {
+        form.submit();
+    }
+    
+    // Close modal when clicking outside
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            closeModal();
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,75 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Dashboard - Admin{% endblock %}
+
+{% block content %}
+<div class="dashboard">
+    <h1><i class="fas fa-tachometer-alt"></i> Dashboard</h1>
+    
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon blue">
+                <i class="fas fa-users"></i>
+            </div>
+            <div class="stat-info">
+                <h3>{{ stats.total_voters }}</h3>
+                <p>Total Voters</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon green">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="stat-info">
+                <h3>{{ stats.voted_count }}</h3>
+                <p>Voted</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon orange">
+                <i class="fas fa-sitemap"></i>
+            </div>
+            <div class="stat-info">
+                <h3>{{ stats.total_positions }}</h3>
+                <p>Positions</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon purple">
+                <i class="fas fa-user-tie"></i>
+            </div>
+            <div class="stat-info">
+                <h3>{{ stats.total_candidates }}</h3>
+                <p>Candidates</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="dashboard-row">
+        <div class="dashboard-card">
+            <h2><i class="fas fa-chart-line"></i> Voting Progress</h2>
+            <div class="voting-progress">
+                {% set percentage = (stats.voted_count / stats.total_voters * 100) if stats.total_voters > 0 else 0 %}
+                <div class="progress-circle" data-percentage="{{ percentage|int }}">
+                    <span>{{ percentage|int }}%</span>
+                </div>
+                <p>{{ stats.voted_count }} out of {{ stats.total_voters }} voters have cast their votes</p>
+            </div>
+        </div>
+        <div class="dashboard-card">
+            <h2><i class="fas fa-bolt"></i> Quick Actions</h2>
+            <div class="quick-actions">
+                <a href="{{ url_for('admin.positions') }}" class="action-btn">
+                    <i class="fas fa-plus"></i> Add Position
+                </a>
+                <a href="{{ url_for('admin.candidates') }}" class="action-btn">
+                    <i class="fas fa-user-plus"></i> Add Candidate
+                </a>
+                <a href="{{ url_for('admin.results') }}" class="action-btn">
+                    <i class="fas fa-chart-bar"></i> View Results
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
