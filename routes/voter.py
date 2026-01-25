@@ -20,7 +20,7 @@ def voter_required(f):
 def vote():
     if current_user.has_voted:
         flash('You have already voted!', 'info')
-        return redirect(url_for('voter.results'))
+        return render_template('vote.html', positions=Position.query.all(), voted=True)
     
     positions = Position.query.all()
     return render_template('vote.html', positions=positions)
@@ -56,19 +56,19 @@ def submit_vote():
         db.session.rollback()
         flash('An error occurred while submitting your vote.', 'error')
     
-    return redirect(url_for('voter.results'))
+    return redirect(url_for('voter.vote'))
 
 @voter_bp.route('/results')
 @login_required
-@voter_required
 def results():
-    # Redirect to admin results if user is admin
-    if current_user.is_admin:
-        return redirect(url_for('admin.results'))
+    # Only admins can view this page
+    if not current_user.is_admin:
+        flash('Results are only available to administrators.', 'error')
+        return render_template('vote.html', positions=Position.query.all())
     
-    # Voters cannot view results
-    flash('Results are only available to administrators.', 'info')
-    return redirect(url_for('voter.vote'))
+    # Admin can view results
+    positions = Position.query.all()
+    return render_template('results.html', positions=positions)
 
 @voter_bp.route('/profile', methods=['GET', 'POST'])
 @login_required
