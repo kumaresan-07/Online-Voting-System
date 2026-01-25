@@ -8,7 +8,7 @@ echo.
 echo Default MySQL Settings:
 echo   Host: localhost
 echo   User: root
-echo   Password: root123
+echo   Password: (empty)
 echo   Database: online_voting
 echo   Port: 3307
 echo.
@@ -17,7 +17,7 @@ echo ================================================
 REM Set environment variables for XAMPP MySQL
 set MYSQL_HOST=localhost
 set MYSQL_USER=root
-set MYSQL_PASSWORD=root123
+set MYSQL_PASSWORD=
 set MYSQL_DB=online_voting
 set MYSQL_PORT=3307
 

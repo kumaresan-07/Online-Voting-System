@@ -11,10 +11,13 @@ def create_database():
     connection = None
     try:
         # Connect to MySQL server (without specifying database)
+        # Force empty password for XAMPP localhost
+        password = Config.MYSQL_PASSWORD if Config.MYSQL_PASSWORD else ''
         connection = pymysql.connect(
             host=Config.MYSQL_HOST,
             user=Config.MYSQL_USER,
-            password=Config.MYSQL_PASSWORD,
+            password=password,
+            port=int(Config.MYSQL_PORT),
             charset='utf8mb4'
         )
         

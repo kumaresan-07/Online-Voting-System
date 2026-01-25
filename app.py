@@ -14,6 +14,18 @@ def create_app():
     db.init_app(app)
     login_manager.init_app(app)
     
+    # Ensure database commits are properly handled
+    @app.teardown_appcontext
+    def shutdown_session(exception=None):
+        if exception:
+            db.session.rollback()
+        else:
+            try:
+                db.session.commit()
+            except:
+                db.session.rollback()
+        db.session.remove()
+    
     # Initialize the user loader
     init_login_manager(login_manager)
     
@@ -31,31 +43,41 @@ def create_app():
         app.register_blueprint(admin_bp, url_prefix='/admin')
         
         # Create tables
-        db.create_all()
+        try:
+            db.create_all()
+        except Exception as e:
+            print(f"Warning: Could not create database tables: {e}")
+            print("Make sure MySQL is running and credentials are correct.")
         
         # Create default admin if not exists
-        if not Admin.query.filter_by(email='admin@gmail.com').first():
-            admin = Admin(
-                first_name='Admin',
-                last_name='User',
-                email='admin@gmail.com'
-            )
-            admin.set_password('admin')
-            db.session.add(admin)
-            db.session.commit()
+        try:
+            if not Admin.query.filter_by(email='admin@gmail.com').first():
+                admin = Admin(
+                    first_name='Admin',
+                    last_name='User',
+                    email='admin@gmail.com'
+                )
+                admin.set_password('admin')
+                db.session.add(admin)
+                db.session.commit()
+        except Exception as e:
+            print(f"Warning: Could not create default admin: {e}")
         
         # Create default positions if not exist
-        if not Position.query.first():
-            positions = [
-                Position(name='Chairman', description='Head of the organization'),
-                Position(name='Vice-Chairman', description='Deputy head'),
-                Position(name='Secretary', description='Administrative head'),
-            ]
-            db.session.add_all(positions)
-            db.session.commit()
+        try:
+            if not Position.query.first():
+                positions = [
+                    Position(name='Chairman', description='Head of the organization'),
+                    Position(name='Vice-Chairman', description='Deputy head'),
+                    Position(name='Secretary', description='Administrative head'),
+                ]
+                db.session.add_all(positions)
+                db.session.commit()
+        except Exception as e:
+            print(f"Warning: Could not create default positions: {e}")
     
     return app
 
 if __name__ == '__main__':
     app = create_app()
-    app.run(debug=True, port=5000)
+    app.run(debug=False, port=5000, use_reloader=False)

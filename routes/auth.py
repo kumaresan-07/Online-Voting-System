@@ -66,11 +66,16 @@ def register():
         )
         voter.set_password(password)
         
-        db.session.add(voter)
-        db.session.commit()
-        
-        flash('Registration successful! Please login.', 'success')
-        return redirect(url_for('auth.login'))
+        try:
+            db.session.add(voter)
+            db.session.commit()
+            flash('Registration successful! Please login.', 'success')
+            return redirect(url_for('auth.login'))
+        except Exception as e:
+            db.session.rollback()
+            print(f"Error saving voter: {str(e)}")
+            flash(f'Error during registration: {str(e)}', 'error')
+            return render_template('register.html')
     
     return render_template('register.html')
 

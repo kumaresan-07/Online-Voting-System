@@ -68,28 +68,44 @@ def positions():
             if Position.query.filter_by(name=name).first():
                 flash('Position already exists', 'error')
             else:
-                position = Position(name=name, description=description)
-                db.session.add(position)
-                db.session.commit()
-                flash('Position added successfully!', 'success')
+                try:
+                    position = Position(name=name, description=description)
+                    db.session.add(position)
+                    db.session.commit()
+                    db.session.expunge_all()
+                    flash('Position added successfully!', 'success')
+                except Exception as e:
+                    db.session.rollback()
+                    flash(f'Error adding position: {str(e)}', 'error')
         
         elif action == 'delete':
             position_id = request.form.get('position_id')
-            position = Position.query.get(position_id)
-            if position:
-                db.session.delete(position)
-                db.session.commit()
-                flash('Position deleted successfully!', 'success')
+            try:
+                position = Position.query.get(position_id)
+                if position:
+                    db.session.delete(position)
+                    db.session.commit()
+                    db.session.expunge_all()
+                    flash('Position deleted successfully!', 'success')
+            except Exception as e:
+                db.session.rollback()
+                flash(f'Error deleting position: {str(e)}', 'error')
         
         elif action == 'edit':
             position_id = request.form.get('position_id')
-            position = Position.query.get(position_id)
-            if position:
-                position.name = request.form.get('name')
-                position.description = request.form.get('description')
-                db.session.commit()
-                flash('Position updated successfully!', 'success')
+            try:
+                position = Position.query.get(position_id)
+                if position:
+                    position.name = request.form.get('name')
+                    position.description = request.form.get('description')
+                    db.session.commit()
+                    db.session.expunge_all()
+                    flash('Position updated successfully!', 'success')
+            except Exception as e:
+                db.session.rollback()
+                flash(f'Error updating position: {str(e)}', 'error')
     
+    db.session.expire_all()
     positions = Position.query.all()
     return render_template('admin/positions.html', positions=positions)
 
@@ -104,28 +120,44 @@ def candidates():
             name = request.form.get('name')
             position_id = request.form.get('position_id')
             
-            candidate = Candidate(name=name, position_id=position_id)
-            db.session.add(candidate)
-            db.session.commit()
-            flash('Candidate added successfully!', 'success')
+            try:
+                candidate = Candidate(name=name, position_id=position_id)
+                db.session.add(candidate)
+                db.session.commit()
+                db.session.expunge_all()
+                flash('Candidate added successfully!', 'success')
+            except Exception as e:
+                db.session.rollback()
+                flash(f'Error adding candidate: {str(e)}', 'error')
         
         elif action == 'delete':
             candidate_id = request.form.get('candidate_id')
-            candidate = Candidate.query.get(candidate_id)
-            if candidate:
-                db.session.delete(candidate)
-                db.session.commit()
-                flash('Candidate deleted successfully!', 'success')
+            try:
+                candidate = Candidate.query.get(candidate_id)
+                if candidate:
+                    db.session.delete(candidate)
+                    db.session.commit()
+                    db.session.expunge_all()
+                    flash('Candidate deleted successfully!', 'success')
+            except Exception as e:
+                db.session.rollback()
+                flash(f'Error deleting candidate: {str(e)}', 'error')
         
         elif action == 'edit':
             candidate_id = request.form.get('candidate_id')
-            candidate = Candidate.query.get(candidate_id)
-            if candidate:
-                candidate.name = request.form.get('name')
-                candidate.position_id = request.form.get('position_id')
-                db.session.commit()
-                flash('Candidate updated successfully!', 'success')
+            try:
+                candidate = Candidate.query.get(candidate_id)
+                if candidate:
+                    candidate.name = request.form.get('name')
+                    candidate.position_id = request.form.get('position_id')
+                    db.session.commit()
+                    db.session.expunge_all()
+                    flash('Candidate updated successfully!', 'success')
+            except Exception as e:
+                db.session.rollback()
+                flash(f'Error updating candidate: {str(e)}', 'error')
     
+    db.session.expire_all()
     candidates = Candidate.query.all()
     positions = Position.query.all()
     return render_template('admin/candidates.html', candidates=candidates, positions=positions)
@@ -197,22 +229,34 @@ def manage_admins():
             if Admin.query.filter_by(email=email).first():
                 flash('Email already registered', 'error')
             else:
-                admin = Admin(first_name=first_name, last_name=last_name, email=email)
-                admin.set_password(password)
-                db.session.add(admin)
-                db.session.commit()
-                flash('Admin added successfully!', 'success')
+                try:
+                    admin = Admin(first_name=first_name, last_name=last_name, email=email)
+                    admin.set_password(password)
+                    db.session.add(admin)
+                    db.session.flush()  # Flush to database
+                    db.session.commit()  # Commit transaction
+                    flash('Admin added successfully!', 'success')
+                except Exception as e:
+                    db.session.rollback()
+                    print(f"Error adding admin: {str(e)}")
+                    flash(f'Error: {str(e)}', 'error')
         
         elif action == 'delete':
             admin_id = request.form.get('admin_id')
             if int(admin_id) == current_user.id:
                 flash('You cannot delete yourself!', 'error')
             else:
-                admin = Admin.query.get(admin_id)
-                if admin:
-                    db.session.delete(admin)
-                    db.session.commit()
-                    flash('Admin deleted successfully!', 'success')
+                try:
+                    admin = Admin.query.get(admin_id)
+                    if admin:
+                        db.session.delete(admin)
+                        db.session.flush()
+                        db.session.commit()
+                        flash('Admin deleted successfully!', 'success')
+                except Exception as e:
+                    db.session.rollback()
+                    print(f"Error deleting admin: {str(e)}")
+                    flash(f'Error: {str(e)}', 'error')
     
     admins = Admin.query.all()
     return render_template('admin/manage_admins.html', admins=admins)

@@ -5,9 +5,30 @@ services:
     buildCommand: pip install -r requirements.txt
     startCommand: gunicorn wsgi:app
     envVars:
-      - key: DB_MODE
-        value: sqlite
       - key: SECRET_KEY
         generateValue: true
       - key: PYTHON_VERSION
         value: 3.11.0
+      - key: MYSQL_HOST
+        fromDatabase:
+          name: voting_db
+          property: host
+      - key: MYSQL_PORT
+        fromDatabase:
+          name: voting_db
+          property: port
+      - key: MYSQL_USER
+        fromDatabase:
+          name: voting_db
+          property: user
+      - key: MYSQL_PASSWORD
+        fromDatabase:
+          name: voting_db
+          property: password
+      - key: MYSQL_DB
+        value: online_voting
+
+databases:
+  - name: voting_db
+    databaseName: online_voting
+    user: voting_user

@@ -62,18 +62,13 @@ def submit_vote():
 @login_required
 @voter_required
 def results():
-    positions = Position.query.all()
-    results_data = []
+    # Redirect to admin results if user is admin
+    if current_user.is_admin:
+        return redirect(url_for('admin.results'))
     
-    for position in positions:
-        candidates = Candidate.query.filter_by(position_id=position.id).order_by(Candidate.votes_count.desc()).all()
-        results_data.append({
-            'position': position,
-            'candidates': candidates,
-            'total_votes': sum(c.votes_count for c in candidates)
-        })
-    
-    return render_template('results.html', results_data=results_data)
+    # Voters cannot view results
+    flash('Results are only available to administrators.', 'info')
+    return redirect(url_for('voter.vote'))
 
 @voter_bp.route('/profile', methods=['GET', 'POST'])
 @login_required

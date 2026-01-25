@@ -6,13 +6,12 @@ class Config:
     # Database Mode: 'mysql' for XAMPP local MySQL
     DB_MODE = 'mysql'
     
-    # XAMPP MySQL Database Configuration
-    # Default XAMPP settings: host=localhost, user=root, password='root123'
+    # XAMPP MySQL Database Configuration - Force empty password for XAMPP localhost
     MYSQL_HOST = os.environ.get('MYSQL_HOST', 'localhost')
     MYSQL_USER = os.environ.get('MYSQL_USER', 'root')
-    MYSQL_PASSWORD = os.environ.get('MYSQL_PASSWORD', 'root123')  # XAMPP default is empty password
+    MYSQL_PASSWORD = os.environ.get('MYSQL_PASSWORD') or ''  # Force empty if not set
     MYSQL_DB = os.environ.get('MYSQL_DB', 'online_voting')
-    MYSQL_PORT = os.environ.get('MYSQL_PORT', '3307')  # XAMPP default port
+    MYSQL_PORT = os.environ.get('MYSQL_PORT', '3307')
     
     # SQLAlchemy Database URI for XAMPP MySQL
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
