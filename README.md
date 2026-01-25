@@ -232,11 +232,7 @@ The system uses 5 main tables:
    - Check MySQL user permissions
    - Ensure user has CREATE DATABASE privilege
 
-## 📄 License
 
-MIT License
 
-## 🙏 Credits
 
-Converted from PHP Online Voting System to Python Flask.
 
